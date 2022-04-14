@@ -16,6 +16,7 @@ package datadogexporter // import "github.com/open-telemetry/opentelemetry-colle
 
 import (
 	"context"
+	"errors"
 	"os"
 	"sync"
 	"time"
@@ -48,7 +49,7 @@ func NewFactory() component.ExporterFactory {
 	f := &factory{}
 	return component.NewExporterFactory(
 		typeStr,
-		f.createDefaultConfig,
+		createDefaultConfig,
 		component.WithMetricsExporter(f.createMetricsExporter),
 		component.WithTracesExporter(f.createTracesExporter),
 	)
@@ -62,7 +63,7 @@ func defaulttimeoutSettings() exporterhelper.TimeoutSettings {
 
 // createDefaultConfig creates the default exporter configuration
 // TODO (#8396): Remove `os.Getenv` everywhere.
-func (*factory) createDefaultConfig() config.Exporter {
+func createDefaultConfig() config.Exporter {
 	return &ddconfig.Config{
 		ExporterSettings: config.NewExporterSettings(config.NewComponentID(typeStr)),
 		TimeoutSettings:  defaulttimeoutSettings(),
@@ -188,20 +189,23 @@ func (f *factory) createTracesExporter(
 	set component.ExporterCreateSettings,
 	c config.Exporter,
 ) (component.TracesExporter, error) {
-
-	cfg := c.(*ddconfig.Config)
-
+	cfg, ok := c.(*ddconfig.Config)
+	if !ok {
+		return nil, errors.New("programming error: config structure is not of type *ddconfig.Config")
+	}
 	set.Logger.Info("sanitizing Datadog traces exporter configuration")
 	if err := cfg.Sanitize(set.Logger); err != nil {
 		return nil, err
 	}
-
-	ctx, cancel := context.WithCancel(ctx)
-	var pushTracesFn consumer.ConsumeTracesFunc
-
+	var (
+		pusher consumer.ConsumeTracesFunc
+		stop   component.ShutdownFunc
+	)
+	ctx, cancel := context.WithCancel(ctx) // nolint:govet
+	// cancel() runs on shutdown
 	if cfg.OnlyMetadata {
-		pushTracesFn = func(_ context.Context, td ptrace.Traces) error {
-			// only sending metadata, use only attributes
+		// only host metadata needs to be sent, once.
+		pusher = func(_ context.Context, td ptrace.Traces) error {
 			f.onceMetadata.Do(func() {
 				attrs := pcommon.NewMap()
 				if td.ResourceSpans().Len() > 0 {
@@ -209,30 +213,35 @@ func (f *factory) createTracesExporter(
 				}
 				go metadata.Pusher(ctx, set, newMetadataConfigfromConfig(cfg), attrs)
 			})
-
+			return nil
+		}
+		stop = func(context.Context) error {
+			cancel()
 			return nil
 		}
 	} else {
-		exporter, err := newTracesExporter(ctx, set, cfg, &f.onceMetadata)
+		tracex, err := newTracesExporter(ctx, set, cfg, &f.onceMetadata)
 		if err != nil {
 			cancel()
 			return nil, err
 		}
-		pushTracesFn = exporter.pushTraceDataScrubbed
+		pusher = tracex.consumeTraces
+		stop = func(context.Context) error {
+			cancel()              // first cancel context
+			tracex.waitShutdown() // then wait for shutdown
+			return nil
+		}
 	}
 
 	return exporterhelper.NewTracesExporter(
 		cfg,
 		set,
-		pushTracesFn,
+		pusher,
 		// explicitly disable since we rely on http.Client timeout logic.
 		exporterhelper.WithTimeout(exporterhelper.TimeoutSettings{Timeout: 0 * time.Second}),
 		// We don't do retries on traces because of deduping concerns on APM Events.
 		exporterhelper.WithRetry(exporterhelper.RetrySettings{Enabled: false}),
 		exporterhelper.WithQueue(cfg.QueueSettings),
-		exporterhelper.WithShutdown(func(context.Context) error {
-			cancel()
-			return nil
-		}),
+		exporterhelper.WithShutdown(stop),
 	)
 }
