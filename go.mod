@@ -13,7 +13,7 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/carbonexporter v0.51.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/clickhouseexporter v0.51.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/coralogixexporter v0.51.0
-	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/datadogexporter v0.51.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/datadogexporter v0.0.0-00010101000000-000000000000
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/dynatraceexporter v0.51.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/elasticexporter v0.51.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/exporter/elasticsearchexporter v0.51.0
@@ -164,11 +164,11 @@ require (
 	github.com/Azure/go-autorest/tracing v0.6.0 // indirect
 	github.com/ClickHouse/clickhouse-go v1.5.4 // indirect
 	github.com/DataDog/agent-payload/v5 v5.0.20 // indirect
-	github.com/DataDog/datadog-agent/pkg/obfuscate v0.36.0-rc.4 // indirect
-	github.com/DataDog/datadog-agent/pkg/otlp/model v0.36.0-rc.4.0.20220509061848-112302548d49 // indirect
-	github.com/DataDog/datadog-agent/pkg/quantile v0.36.0-rc.4.0.20220426134022-b55bccd5073f // indirect
-	github.com/DataDog/datadog-agent/pkg/remoteconfig/client v0.36.0-rc.4 // indirect
-	github.com/DataDog/datadog-agent/pkg/trace v0.36.0-rc.4.0.20220509061848-112302548d49 // indirect
+	github.com/DataDog/datadog-agent/pkg/obfuscate v0.37.0-rc.3 // indirect
+	github.com/DataDog/datadog-agent/pkg/otlp/model v0.37.0-rc.3 // indirect
+	github.com/DataDog/datadog-agent/pkg/quantile v0.37.0-rc.3 // indirect
+	github.com/DataDog/datadog-agent/pkg/remoteconfig/client v0.37.0-rc.3 // indirect
+	github.com/DataDog/datadog-agent/pkg/trace v0.0.0-00010101000000-000000000000 // indirect
 	github.com/DataDog/datadog-go/v5 v5.1.0 // indirect
 	github.com/DataDog/sketches-go v1.4.1 // indirect
 	github.com/GehirnInc/crypt v0.0.0-20200316065508-bb7000b8a962 // indirect
@@ -437,7 +437,7 @@ require (
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.395 // indirect
 	github.com/tg123/go-htpasswd v1.2.0 // indirect
-	github.com/theupdateframework/go-tuf v0.1.0 // indirect
+	github.com/theupdateframework/go-tuf v0.3.0 // indirect
 	github.com/tidwall/gjson v1.12.1 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
@@ -465,7 +465,6 @@ require (
 	go.mongodb.org/atlas v0.16.0 // indirect
 	go.mongodb.org/mongo-driver v1.9.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
-	go.opentelemetry.io/collector/model v0.49.0 // indirect
 	go.opentelemetry.io/collector/pdata v0.51.0 // indirect
 	go.opentelemetry.io/collector/semconv v0.51.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.32.0 // indirect
@@ -852,3 +851,5 @@ retract v0.37.0 // Contains dependencies on v0.36.0 components, which should hav
 
 // see https://github.com/distribution/distribution/issues/3590
 exclude github.com/docker/distribution v2.8.0+incompatible
+
+replace github.com/DataDog/datadog-agent/pkg/trace => ../../DataDog/datadog-agent/pkg/trace

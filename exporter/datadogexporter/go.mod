@@ -4,8 +4,7 @@ go 1.17
 
 require (
 	github.com/DataDog/agent-payload/v5 v5.0.20
-	github.com/DataDog/datadog-agent/pkg/quantile v0.36.0-rc.4.0.20220426134022-b55bccd5073f
-	github.com/DataDog/datadog-agent/pkg/trace v0.36.0-rc.4.0.20220509061848-112302548d49
+	github.com/DataDog/datadog-agent/pkg/trace v0.0.0-00010101000000-000000000000
 	github.com/DataDog/sketches-go v1.4.1
 	github.com/aws/aws-sdk-go v1.44.11
 	github.com/cenkalti/backoff/v4 v4.1.3
@@ -21,9 +20,9 @@ require (
 )
 
 require (
-	github.com/DataDog/datadog-agent/pkg/obfuscate v0.36.0-rc.4 // indirect
-	github.com/DataDog/datadog-agent/pkg/otlp/model v0.36.0-rc.4.0.20220509061848-112302548d49 // indirect
-	github.com/DataDog/datadog-agent/pkg/remoteconfig/client v0.36.0-rc.4 // indirect
+	github.com/DataDog/datadog-agent/pkg/obfuscate v0.37.0-rc.3 // indirect
+	github.com/DataDog/datadog-agent/pkg/otlp/model v0.37.0-rc.3 // indirect
+	github.com/DataDog/datadog-agent/pkg/remoteconfig/client v0.37.0-rc.3 // indirect
 	github.com/DataDog/datadog-go/v5 v5.1.0 // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
@@ -55,7 +54,7 @@ require (
 	github.com/secure-systems-lab/go-securesystemslib v0.3.1 // indirect
 	github.com/shirou/gopsutil/v3 v3.22.4 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
-	github.com/theupdateframework/go-tuf v0.1.0 // indirect
+	github.com/theupdateframework/go-tuf v0.3.0 // indirect
 	github.com/tinylib/msgp v1.1.6 // indirect
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
 	github.com/tklauser/numcpus v0.4.0 // indirect
@@ -63,7 +62,6 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	github.com/zorkian/go-datadog-api v2.30.0+incompatible // indirect
 	go.opencensus.io v0.23.0 // indirect
-	go.opentelemetry.io/collector/model v0.49.0 // indirect
 	go.opentelemetry.io/otel v1.7.0 // indirect
 	go.opentelemetry.io/otel/metric v0.30.0 // indirect
 	go.opentelemetry.io/otel/trace v1.7.0 // indirect
@@ -88,3 +86,6 @@ replace github.com/open-telemetry/opentelemetry-collector-contrib/pkg/resourceto
 // see https://github.com/go-chi/chi/issues/713
 // see https://github.com/DataDog/dd-trace-go/issues/1220
 replace github.com/go-chi/chi/v4 => github.com/go-chi/chi v4.0.0+incompatible
+
+// NOTE(dragon3): To use https://github.com/DataDog/datadog-agent/pull/12176
+replace github.com/DataDog/datadog-agent/pkg/trace => ../../../../DataDog/datadog-agent/pkg/trace
